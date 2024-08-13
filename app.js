@@ -44,4 +44,9 @@ app.get('/api/owners', (req, res) => {
     });
 });
 
+// GET /owners/:id/pets
+app.get('/api/owners/:id/pets', (req, res) => {
+  console.log(req.params);
+});
+
 module.exports = app;
