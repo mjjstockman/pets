@@ -46,7 +46,28 @@ app.get('/api/owners', (req, res) => {
 
 // GET /owners/:id/pets
 app.get('/api/owners/:id/pets', (req, res) => {
-  console.log(req.params);
+  const { id: ownerId } = req.params;
+  fs.readdir(`${__dirname}/be-pets-and-owners/data/pets`)
+    .then((petsFiles) => {
+      const getPetsPromises = petsFiles.map((file) => {
+        return fs
+          .readFile(
+            `${__dirname}/be-pets-and-owners/data/pets/${file}`,
+            'utf-8'
+          )
+          .then((petsData) => {
+            return JSON.parse(petsData);
+          });
+      });
+      return Promise.all(getPetsPromises);
+    })
+    .then((petsData) => {
+      const ownersPets = petsData.filter((pet) => pet.owner === `o${ownerId}`);
+      res.status(200).send({ ownersPets });
+    })
+    .catch((err) => {
+      console.log(err, 'errrrrrr!!!!!!');
+    });
 });
 
 module.exports = app;
